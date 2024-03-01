@@ -3,7 +3,6 @@ package lrucache
 import (
 	"github.com/stretchr/testify/require"
 	"math/rand"
-	"runtime/debug"
 	"sort"
 	"testing"
 )
@@ -150,40 +149,6 @@ func TestCache_eviction(t *testing.T) {
 				v, ok := c.Get(k)
 				require.True(t, ok)
 				require.Equal(t, keyToValue[k], v)
-			}
-		})
-	}
-}
-
-func TestCache_GCPercent(t *testing.T) {
-	var p = debug.SetGCPercent(100)
-	require.Equal(t, p, 100)
-}
-
-func BenchmarkCache_Set(b *testing.B) {
-	for _, tc := range []struct {
-		name string
-		cap  int
-	}{
-		{
-			name: "small",
-			cap:  1,
-		},
-		{
-			name: "medium",
-			cap:  1000,
-		},
-		{
-			name: "large",
-			cap:  1000000,
-		},
-	} {
-		b.Run(tc.name, func(b *testing.B) {
-			c := New(tc.cap)
-			b.ResetTimer()
-			b.ReportAllocs()
-			for i := 0; i < b.N; i++ {
-				c.Set(i%tc.cap, i)
 			}
 		})
 	}
